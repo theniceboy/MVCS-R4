@@ -41,23 +41,55 @@ task trayCtrl {
 task clawCtrl {
 	while(true){
 		if(vexRT[Btn8L]){
-			setServo(sClaw, 127);
+			motor[sClaw] = 127;
 		}
 		if(vexRT[Btn8R]){
-			setServo(sClaw, -127);
+			motor[sClaw] = -127;
 		}
 	}
 }
 
-float theta = 90, power = 0, x = 0, y = 0, direction = 1;
+float theta = 90, power = 0, x = 0, y = 0, z = 0, vmL1, vmL2, vmR1, vmR2, vmax, direction = 1;
+
 task main()
 {
 	startTask(clawCtrl);
 	startTask(trayCtrl);
 	while (true) {
+		
 		x = vexRT[Ch4];
 		y = vexRT[Ch3];
+		z = vexRT[Ch1];
 		power = sqrt(x * x + y * y);
+		
+		if (power > 20) {
+    
+			vmR1 = 3.0 * x + 2.0 * y - 1.414 * z;
+			vmL1 = -3.0 * x + 2.0 * y + 7.071 * z;
+			vmR2 = -4.243 * x + 2.828 * y - 2.0 * z;
+			vmL2 = 4.243 * x + 2.828 * y - 2.0 * z;
+			
+	    
+	    vmax = fabs(vmL1);
+	    if (fabs(vmL2) > fabs(vmax)) {
+	        vmax = fabs(vmL2);
+	    }
+	    if (fabs(vmR1) > fabs(vmax)) {
+	        vmax = fabs(vmR1);
+	    }
+	    if (fabs(vmR2) > fabs(vmax)) {
+	        vmax = fabs(vmR2);
+	    }
+	    motor[mL1] = vmL1 / vmax * 127.0;
+	    motor[mR1] = vmR1 / vmax * 127.0;
+    	motor[mL2] = vmL2 / vmax * 127.0;
+    	motor[mR2] = vmR2 / vmax * 127.0;
+		} else {
+			motor[mL1] = motor[mL2] = motor[mR1] = motor[mR2] = 0;
+		}
+		
+		/*
+	
 		if (power > 10) {
 			//if (y > 0) {
 			if (power > 100) {
@@ -107,6 +139,7 @@ task main()
 		} else {
 			motor[mTray] = 0;
 		}
+		*/
 
  		EndTimeSlice();
 	}

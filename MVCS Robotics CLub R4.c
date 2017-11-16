@@ -36,6 +36,7 @@ task trayCtrl {
 			}
 			motor[mEject] = 0;
 		}
+		
 	}
 }
 task clawCtrl {
@@ -46,6 +47,7 @@ task clawCtrl {
 		if(vexRT[Btn8R]){
 			motor[sClaw] = -127;
 		}
+		EndTimeSlice();
 	}
 }
 

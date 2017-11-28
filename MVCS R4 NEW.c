@@ -46,7 +46,7 @@ task manualCtrl {
 		}
 		if(vexRT[Btn8R]){
 			motor[sClaw] = -127;
-		}x
+		}
 		if(vexRT[Btn6D]){
 			motor[mTray] = 100;
 		}else if(vexRT[Btn6U]){
@@ -54,7 +54,7 @@ task manualCtrl {
 		} else{
 			motor[mTray] = 0;
 		}
-		EndTimeSlice;
+		EndTimeSlice();
 	}
 }
 
@@ -72,13 +72,24 @@ task main()
 		z = vexRT[Ch1];
 		power = sqrt(x * x + y * y);
 
+		if (vexRT[Ch3] > 20 || vexRT[Ch3] < -20) {
+			motor[mL1] = motor[mL2] = vexRT[Ch3];
+		} else {
+			motor[mL1] = motor[mL2] = 0;
+		}
+		if (vexRT[Ch2] > 20 || vexRT[Ch2] < -20) {
+			motor[mR1] = motor[mR2] = vexRT[Ch2];
+		} else {
+			motor[mR1] = motor[mR2] = 0;
+		}
+/*
 		if (power > 20) {
+		
 
-			vmR1 = 3.0 * x + 2.0 * y - 1.414 * z;
-			vmL1 = -3.0 * x + 2.0 * y + 7.071 * z;
-			vmR2 = -4.243 * x + 2.828 * y - 2.0 * z;
-			vmL2 = 4.243 * x + 2.828 * y - 2.0 * z;
-
+			vmR1 = (x + y);
+			vmL1 = (y - x); 
+			vmR2 = 2.828 * (y - x);
+			vmL2 = 2.828 * (x + y);
 
 	    vmax = fabs(vmL1);
 	    if (fabs(vmL2) > fabs(vmax)) {
@@ -97,6 +108,7 @@ task main()
 		} else {
 			motor[mL1] = motor[mL2] = motor[mR1] = motor[mR2] = 0;
 		}
+		*/
 
 		/*
 

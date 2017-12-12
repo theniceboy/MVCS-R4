@@ -2,6 +2,7 @@
 #pragma config(Sensor, in2,    ejctPot,        sensorPotentiometer)
 #pragma config(Sensor, in3,    potScissorL,    sensorPotentiometer)
 #pragma config(Sensor, in4,    potScissorR,    sensorPotentiometer)
+#pragma config(Sensor, in5,    lfClaw,         sensorLineFollower)
 #pragma config(Sensor, dgtl1,  ledR,           sensorLEDtoVCC)
 #pragma config(Sensor, dgtl2,  ledG,           sensorLEDtoVCC)
 #pragma config(Sensor, dgtl3,  legB,           sensorLEDtoVCC)
@@ -10,7 +11,7 @@
 #pragma config(Motor,  port3,           mL2,           tmotorVex393_MC29, openLoop)
 #pragma config(Motor,  port4,           mR1,           tmotorVex393_MC29, openLoop, reversed)
 #pragma config(Motor,  port5,           mScissorL,     tmotorVex393_MC29, openLoop, reversed)
-#pragma config(Motor,  port6,           sClaw,         tmotorServoStandard, openLoop)
+#pragma config(Motor,  port6,           mClaw,         tmotorVex393_MC29, openLoop)
 #pragma config(Motor,  port7,           mClawExtend,   tmotorVex393_MC29, openLoop)
 #pragma config(Motor,  port8,           mScissorR,     tmotorVex393_MC29, openLoop, reversed)
 #pragma config(Motor,  port9,           mTray,         tmotorVex393_MC29, openLoop)
@@ -58,12 +59,14 @@ task trayCtrl {
 
 task manualCtrl {
 	while(true){
+		/*
 		if(vexRT[Btn8L]){
-			motor[sClaw] = 127;
+			motor[mClaw] = 127;
 		}
 		if(vexRT[Btn8R]){
 			motor[sClaw] = -127;
 		}
+		*/
 		if(vexRT[Btn6D]){
 			motor[mTray] = 100;
 		}else if(vexRT[Btn6U]){
@@ -109,6 +112,18 @@ task autoStack {
 	if (autoStacking) {
 		return;
 	}
+	motor[mClaw] = 50;
+	wait1Msec(1000);
+	motor[mClawExtend] = 127;
+	while (SensorValue[lfClaw] > 2970) {
+		wait1Msec(1);
+		//EndTimeSlice();
+	}
+	wait1Msec(200);
+	motor[mClawExtend] = -127;
+	motor[mClaw] = 127;
+	wait1Msec(500);
+	motor[mClaw] = motor[mClawExtend] = 0;
 	//while (abs(SensorValue[potScissor] - potPositions[stackedCount]) > potScissorErrorAllowance) {
 		//motor[mScissorL] = mScissorValues[SensorValue[potScissor] < potPositions[stackedCount]];
 	//}
@@ -119,11 +134,13 @@ task main()
 {
 	//startTask(manualCtrl);
 	//startTask(trayCtrl);
-	startTask (scissorLiftControl);
+	//startTask (scissorLiftControl);
+	startTask (autoStack);
 	int value = 0;
 
 
-	float theta = 90, power = 0, x = 0, y = 0, z = 0, vmL1, vmL2, vmR1, vmR2, vmax, direction = 1;
+	float theta = 90, power = 0, x = 0, y = 0, z = 0, vmL1, vm5L2, vmR1, vmR2, vmax, direction = 1;
+	int motorL1, motorL2, motorR1, motorR2;
 
 	while (true) {
 
@@ -151,40 +168,44 @@ task main()
 				power = 127;
 			}
 			direction = (y < 0 ? -1 : 1);
-			motor[mL1] = motor[mL2] = (y - x) / 2;
+			motorL1 = motorL2 = (y - x) / 2;
 			if (x > -20 && x < 20) {
-				motor[mL1] = motor[mR1] = motor[mL2] = motor[mR2] = direction * power;
+				motorL1 = motorR1 = motorL2 = motorR2 = direction * power;
 			} else if (y > -15 && y < 15) {
 				if (y < 0) {
-					motor[mL1] = motor[mL2] = 0;
-					motor[mR1] = motor[mR2] = x;
+					motorL1 = motorL2 = 0;
+					motorR1 = motorR2 = x;
 				} else {
-					motor[mL1] = motor[mL2] = x;
-					motor[mR1] = motor[mR2] = 0;
+					motorL1 = motorL2 = x;
+					motorR1 = motorR2 = 0;
 				}
 			} else {
 				if (x < 0) {
-					motor[mL2] = 0;
-					motor[mR2] = direction * -x * (power / 127.0);
-					motor[mL1] = motor[mR1] = (1.2 * y) / 2;
+					motorL2 = 0;
+					motorR2 = direction * -x * (power / 127.0);
+					motorL1 = motorR1 = (1.2 * y) / 2;
 				} else {
-					motor[mL2] = direction * x * (power / 127.0);
-					motor[mR2] = 0;
-					motor[mL1] = motor[mR1] = (1.2 * y) / 2;
+					motorL2 = direction * x * (power / 127.0);
+					motorR2 = 0;
+					motorL1 = motorR1 = (1.2 * y) / 2;
 				}
 			}
 		} else {
-			motor[mL1] = motor[mL2] = motor[mR1] = motor[mR2] = 0;
+			motorL1 = motorL2 = motorR1 = motorR2 = 0;
 		}
-
+/*
 		if (abs(z) > 10) {
-			motor[mL1] += z;
-			motor[mL2] += z;
-			motor[mR1] -= z;
-			motor[mR2] -= z;
+			motorL1 += z;
+			motorL2 += z;
+			motorR1 -= z;
+			motorR2 -= z;
 		}
+		*/
 
-		motor[mR2] = 127;
+		motor[mL1] = motorL1;
+		motor[mL2] = motorL2;
+		motor[mR1] = motorR1;
+		motor[mR2] = motorR2;
 
 		//value = (vexRT[Btn5D] ? mScissorValues[0] : (vexRT[Btn5U] ? mScissorValues[1] : 0));
 

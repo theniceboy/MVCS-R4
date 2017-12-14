@@ -62,7 +62,7 @@ task trayCtrl {
 		} else {
 			motor[mTray] = 0;
 		}
-
+/*
 		if (vexRT[Btn8U]) {
 			motor[mTray] = -127;
 			while (SensorValue[potTray] < __POS_UP__) {
@@ -81,6 +81,7 @@ task trayCtrl {
 			}
 			motor[mTray] = 0;
 		}
+		*/
 		wait1Msec (10);
 		EndTimeSlice ();
 	}
@@ -115,6 +116,7 @@ task scissorLiftControl {
 	}
 }
 
+bool clawOpen = true;
 bool autoStacking = false;
 task autoStack {
 	if (autoStacking) {
@@ -122,20 +124,28 @@ task autoStack {
 	}
 
 	autoStacking = true;
+
+	motor[mClaw] = 127;
+	wait1Msec (400);
+	motor[mClaw] = 60;
 	motor[mClawExtend] = 127;
 	while (SensorValue[lfClaw] > 3000) {
 		wait1Msec (10);
 		if (vexRT[Btn8L]) {
 			return;
 		}
-		EndTimeSlice();
+		//EndTimeSlice();
 	}
-	wait1Msec (200);
+	
+	wait1Msec (10);
+	//motor[mClaw] = -127;
+	motor[mClawExtend] = -25;
+	wait1Msec (1000);
 	motor[mClaw] = -127;
-	motor[mClawExtend] = 0;
-	wait1Msec (400);
+	wait1Msec (300);
 	motor[mClaw] = 0;
 	clawOpen = true;
+	wait1Msec (5000);
 	motor[mClawExtend] = -127;
 	wait1Msec (200);
 	motor[mClawExtend] = 0;
@@ -146,7 +156,6 @@ task autoStack {
 	//}
 }
 
-bool clawOpen = true;
 task toggleClaw {
 	while (true) {
 		if (vexRT[Btn6U]) {
@@ -174,7 +183,7 @@ task main()
 	
 	
 	startTask (autoStack);
-	startTask (toggleClaw);
+	//startTask (toggleClaw);
 
 	float theta = 90, power = 0, x = 0, y = 0, z = 0, direction = 1;
 	int motorL1, motorL2, motorR1, motorR2;

@@ -112,6 +112,7 @@ task autoStack {
 	if (autoStacking) {
 		return;
 	}
+	
 	motor[mClaw] = 50;
 	wait1Msec(1000);
 	motor[mClawExtend] = 127;
@@ -120,9 +121,10 @@ task autoStack {
 		//EndTimeSlice();
 	}
 	wait1Msec(200);
-	motor[mClawExtend] = -127;
+	motor[mClawExtend] = 0;
 	motor[mClaw] = 127;
-	wait1Msec(500);
+	wait1Msec(1000);
+	motor[mClawExtend] = -127;
 	motor[mClaw] = motor[mClawExtend] = 0;
 	//while (abs(SensorValue[potScissor] - potPositions[stackedCount]) > potScissorErrorAllowance) {
 		//motor[mScissorL] = mScissorValues[SensorValue[potScissor] < potPositions[stackedCount]];
@@ -162,7 +164,7 @@ task main()
 		power = sqrt(x * x + y * y);
 
 
-		if (power > 1000) {
+		if (power > 10) {
 			//if (y > 0) {
 			if (power > 100) {
 				power = 127;
@@ -193,14 +195,19 @@ task main()
 		} else {
 			motorL1 = motorL2 = motorR1 = motorR2 = 0;
 		}
-/*
+		
 		if (abs(z) > 10) {
 			motorL1 += z;
 			motorL2 += z;
 			motorR1 -= z;
 			motorR2 -= z;
 		}
-		*/
+		
+		motorL1 = (motorL1 > 127 ? 127 : motorL1);
+		motorL2 = (motorL2 > 127 ? 127 : motorL2);
+		motorR1 = (motorR1 > 127 ? 127 : motorR1);
+		motorR2 = (motorR2 > 127 ? 127 : motorR2);
+		
 
 		motor[mL1] = motorL1;
 		motor[mL2] = motorL2;

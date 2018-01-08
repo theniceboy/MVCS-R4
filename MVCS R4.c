@@ -9,6 +9,7 @@
 #pragma config(Sensor, dgtl4,  ,               sensorTouch)
 #pragma config(Sensor, dgtl5,  ,               sensorTouch)
 #pragma config(Sensor, dgtl6,  armSwitch2,     sensorTouch)
+#pragma config(Sensor, dgtl7,  startAuto,      sensorTouch)
 #pragma config(Motor,  port1,           mEject,        tmotorVex393_HBridge, openLoop)
 #pragma config(Motor,  port2,           mL1,           tmotorVex393_MC29, openLoop)
 #pragma config(Motor,  port3,           mL2,           tmotorVex393_MC29, openLoop)
@@ -210,6 +211,8 @@ task main()
 	float theta = 90, power = 0, x = 0, y = 0, z = 0, direction = 1;
 	int motorL1, motorL2, motorR1, motorR2;
 
+	int lmtrs, rmtrs;
+
 	while (true) {
 
 		// Update Sensor Values
@@ -230,6 +233,7 @@ task main()
 		power = sqrt(x * x + y * y);
 
 		if (power > 10) {
+			/*
 			//if (y > 0) {
 			if (power > 100) {
 				power = 127;
@@ -257,6 +261,8 @@ task main()
 					motorL1 = motorR1 = (1.2 * y) / 2;
 				}
 			}
+			*/
+			motorL1 = motorL2 = motorR1 = motorR2 = y;
 		} else {
 			motorL1 = motorL2 = motorR1 = motorR2 = 0;
 		}

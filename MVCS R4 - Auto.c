@@ -35,23 +35,25 @@ void moveStraightForRotations(float rotations = 1.0)
 
 	while(-SensorValue[rEncoder] < (abs(rotations) * 360))
 	{
-		if(1.2*SensorValue[rEncoder] == SensorValue[lEncoder]) // If rightEncoder has counted the same amount as leftEncoder:
-		{
+		//if(1.45*SensorValue[rEncoder] == SensorValue[lEncoder]) // If rightEncoder has counted the same amount as leftEncoder:
+		//{
 			// Move Forward
-			motor[mR1] = motor[mR2] = 127;		// Right Motor is run at power level 85
 			motor[mL1] = motor[mL2] = 127;		// Left Motor is run at power level 85
-		}
-		else if(1.2*SensorValue[rEncoder] < SensorValue[lEncoder])	// If rightEncoder has counted more encoder counts
+			motor[mR1] = motor[mR2] = 100;		// Right Motor is run at power level 85
+		//}
+			/*
+		else if(1.45*SensorValue[rEncoder] < SensorValue[lEncoder])	// If rightEncoder has counted more encoder counts
 		{
-			motor[mR1] = motor[mR2] = 107;		// Right Motor is run at power level 65
+			motor[mR1] = motor[mR2] = 97;		// Right Motor is run at power level 65
 			motor[mL1] = motor[mL2]  = 127;		// Left Motor is run at power level 85
 		}
 		else	// Only runs if leftEncoder has counted more encoder counts
 		{
 			// Turn slightly left
 			motor[mR1] = motor[mR2] = 127;		// Right Motor is run at power level 85
-			motor[mL1] = motor[mL2] = 107;		// Left Motor is run at power level 65
+			motor[mL1] = motor[mL2] = 117;		// Left Motor is run at power level 65
 		}
+		*/
 		wait1Msec(1);
 	}
 	motor[mR1] = motor[mR2] = 0;
@@ -64,12 +66,13 @@ void moveBackwardForRotations(float rotations = 1.0)
 
 	while(SensorValue[rEncoder] < (abs(rotations) * 360))
 	{
-		if(SensorValue[rEncoder] == SensorValue[lEncoder]) // If rightEncoder has counted the same amount as leftEncoder:
-		{
+		//if(SensorValue[rEncoder] == SensorValue[lEncoder]) // If rightEncoder has counted the same amount as leftEncoder:
+		//{
 			// Move Forward
-			motor[mR1] = motor[mR2] = -127;		// Right Motor is run at power level 85
 			motor[mL1] = motor[mL2] = -127;		// Left Motor is run at power level 85
-		}
+			motor[mR1] = motor[mR2] = -127;		// Right Motor is run at power level 85
+		//}
+		/*
 		else if(SensorValue[rEncoder] > SensorValue[lEncoder])	// If rightEncoder has counted more encoder counts
 		{
 			// Turn slightly right
@@ -82,6 +85,7 @@ void moveBackwardForRotations(float rotations = 1.0)
 			motor[mR1] = motor[mR2] = -127;		// Right Motor is run at power level 85
 			motor[mL1] = motor[mL2] = -107;		// Left Motor is run at power level 65
 		}
+		*/
 		wait1Msec(1);
 	}
 	motor[mR1] = motor[mR2] = 0;
@@ -109,48 +113,16 @@ void Turn(bool isRight = true, float rotations){
 	if(isRight){
 		while(SensorValue[lEncoder] < (abs(rotations) * 360))
 		{
-			if(-1*SensorValue[rEncoder] == SensorValue[lEncoder]) // If rightEncoder has counted the same amount as leftEncoder:
-			{
-				// Move Forward
-				motor[mR1] = motor[mR2] = -127;		// Right Motor is run at power level 85
-				motor[mL1] = motor[mL2]  = 127;		// Left Motor is run at power level 85
-			}
-			else if(-1*SensorValue[rEncoder] > SensorValue[lEncoder])	// If rightEncoder has counted more encoder counts
-			{
-				// Turn slightly right
-				motor[mR1] = motor[mR2] = -107;		// Right Motor is run at power level 65
-				motor[mL1] = motor[mL2]  = 127;		// Left Motor is run at power level 85
-			}
-			else	// Only runs if leftEncoder has counted more encoder counts
-			{
-				// Turn slightly left
-				motor[mR1] = motor[mR2] = -127;		// Right Motor is run at power level 85
-				motor[mL1] = motor[mL2] = 107;		// Left Motor is run at power level 65
-			}
+			motor[mR1] = motor[mR2] = -127;		// Right Motor is run at power level 85
+			motor[mL1] = motor[mL2]  = 127;		// Left Motor is run at power level 85
 			wait1Msec(1);
 		}
 	}
 	else {
 		while(SensorValue[rEncoder] < (abs(rotations) * 360))
 		{
-			if(SensorValue[rEncoder] == -1*SensorValue[lEncoder]) // If rightEncoder has counted the same amount as leftEncoder:
-			{
-				// Move Forward
-				motor[mR1] = motor[mR2] = 127;		// Right Motor is run at power level 85
-				motor[mL1] = motor[mL2]  = -127;		// Left Motor is run at power level 85
-			}
-			else if(SensorValue[rEncoder] > -1*SensorValue[lEncoder])	// If rightEncoder has counted more encoder counts
-			{
-				// Turn slightly right
-				motor[mR1] = motor[mR2] = 107;		// Right Motor is run at power level 65
-				motor[mL1] = motor[mL2]  = -127;		// Left Motor is run at power level 85
-			}
-			else	// Only runs if leftEncoder has counted more encoder counts
-			{
-				// Turn slightly left
-				motor[mR1] = motor[mR2] = 127;		// Right Motor is run at power level 85
-				motor[mL1] = motor[mL2] = -107;		// Left Motor is run at power level 65
-			}
+			motor[mR1] = motor[mR2] = 127;		// Right Motor is run at power level 85
+			motor[mL1] = motor[mL2]  = -127;		// Left Motor is run at power level 85
 			wait1Msec(1);
 		}
 	}
@@ -173,39 +145,186 @@ void trayEject () {
 
 void liftTray () {
 	motor[mTray] = -127;
-	wait1Msec (2000);
+	wait1Msec (1500);
 	motor[mTray] = -20;
 }
 
 const float angle90l = 0.28, angle90r = 0.55;
 const float angle180l = 0.69, angle180r = 1.15;
-const float _distanceGrabGoal = 3.0;
+const float _distanceGrabGoal = 4.8;
 
-void autoRight10 () {
-	moveStraightForRotations (_distanceGrabGoal);
-	liftTray ();
-	Turn(false, angle180l);
-	moveStraightForRotations (3.0);
+void autoRight5 () {
+	motor[mClawExtend] = 127;
+	wait1Msec (2500);
+	motor[mClawExtend] = 0;
+	SensorValue[rEncoder] = 0;
+	SensorValue[lEncoder] = 0;
+	while(-SensorValue[rEncoder] < (abs(_distanceGrabGoal) * 360))
+	{
+		motor[mL1] = motor[mL2] = 127;		// Left Motor is run at power level 85
+		motor[mR1] = motor[mR2] = 120;		// Right Motor is run at power level 85
+		wait1Msec(1);
+	}
+	motor[mR1] = motor[mR2] = 0;
+	motor[mL1] = motor[mL2] = 0;
+	motor[mTray] = -127;
+	wait1Msec (1600);
+	motor[mTray] = -20;
+	moveBackwardForRotations (2.0);
+	wait1Msec (500);
+	Turn(true, 1.02);
+	wait1Msec(500);
+	moveStraightForRotations (0.9);
 	trayEject ();
+
+	motor[mL1] = motor[mL2] = -127;
+	motor[mR1] = motor[mR2] = -127;
+	wait1Msec(800);
 }
 
 void autoRight20 () {
+	motor[mClawExtend] = 127;
+	wait1Msec (2500);
+	motor[mClawExtend] = 0;
 	moveStraightForRotations (_distanceGrabGoal);
-//lift tray
-	moveStraightForRotations (3.0);
-	Turn(true, angle90r / 2.0);
-	moveStraightForRotations (2.0);
-	Turn(false, angle90l);
-	moveBackwardForRotations (0.5);
-	moveStraightForRotations (4.0);
+	motor[mTray] = -127;
+	wait1Msec (1600);
+	motor[mTray] = -20;
+	moveBackwardForRotations (2.0);
+	wait1Msec (500);
+	Turn(false, 0.97);
+	wait1Msec(500);
+	moveStraightForRotations (2.1);
+	motor[mR1] = motor[mR2] = 127;
+	wait1Msec (1200);
+	motor[mL1] = motor[mL2] = -127;
+	motor[mR1] = motor[mR2] = -127;
+	wait1Msec(600);
+	motor[mL1] = motor[mL2] = 0;
+	motor[mR1] = motor[mR2] = 0;
+wait1Msec (500);
+	motor[mL1] = motor[mL2] = 127;
+	motor[mR1] = motor[mR2] = 127;
+	wait1Msec (3000);
+	motor[mL1] = motor[mL2] = 0;
+	motor[mR1] = motor[mR2] = 0;
 	trayEject ();
+	motor[mL1] = motor[mL2] = -127;
+	motor[mR1] = motor[mR2] = -127;
+	wait1Msec(1300);
+}
+
+void autoLeft20 () {
+	motor[mClawExtend] = 127;
+	wait1Msec (2500);
+	motor[mClawExtend] = 0;
+	SensorValue[rEncoder] = 0;
+	SensorValue[lEncoder] = 0;
+	while(-SensorValue[rEncoder] < (abs(_distanceGrabGoal) * 360))
+	{
+		motor[mL1] = motor[mL2] = 127;		// Left Motor is run at power level 85
+		motor[mR1] = motor[mR2] = 120;		// Right Motor is run at power level 85
+		wait1Msec(1);
+	}
+	motor[mR1] = motor[mR2] = 0;
+	motor[mL1] = motor[mL2] = 0;
+	motor[mTray] = -127;
+	wait1Msec (1600);
+	motor[mTray] = -20;
+	moveBackwardForRotations (2.0);
+	wait1Msec (500);
+	Turn(true, 0.98);
+	wait1Msec(500);
+	moveStraightForRotations (2.1);
+	motor[mL1] = motor[mL2] = 127;
+	wait1Msec (1200);
+	motor[mL1] = motor[mL2] = -127;
+	motor[mR1] = motor[mR2] = -127;
+	wait1Msec(600);
+	motor[mL1] = motor[mL2] = 0;
+	motor[mR1] = motor[mR2] = 0;
+wait1Msec (500);
+	motor[mL1] = motor[mL2] = 127;
+	motor[mR1] = motor[mR2] = 127;
+	wait1Msec (3000);
+	motor[mL1] = motor[mL2] = 0;
+	motor[mR1] = motor[mR2] = 0;
+	trayEject ();
+	motor[mL1] = motor[mL2] = -127;
+	motor[mR1] = motor[mR2] = -127;
+	wait1Msec(1300);
+}
+
+void autoLeft5 () {
+	motor[mClawExtend] = 127;
+	wait1Msec (2500);
+	motor[mClawExtend] = 0;
+	SensorValue[rEncoder] = 0;
+	SensorValue[lEncoder] = 0;
+	while(-SensorValue[rEncoder] < (abs(_distanceGrabGoal) * 360))
+	{
+		motor[mL1] = motor[mL2] = 127;		// Left Motor is run at power level 85
+		motor[mR1] = motor[mR2] = 120;		// Right Motor is run at power level 85
+		wait1Msec(1);
+	}
+	motor[mR1] = motor[mR2] = 0;
+	motor[mL1] = motor[mL2] = 0;
+	motor[mTray] = -127;
+	wait1Msec (1600);
+	motor[mTray] = -20;
+	moveBackwardForRotations (2.0);
+	wait1Msec (500);
+	Turn(true, 1.02);
+	wait1Msec(500);
+	moveStraightForRotations (0.9);
+	trayEject ();
+
+	motor[mL1] = motor[mL2] = -127;
+	motor[mR1] = motor[mR2] = -127;
+	wait1Msec(800);
+}
+
+void defendLeft () {
+	moveStraightForRotations (1.7);
+	Turn (true, 0.18);
+	SensorValue[rEncoder] = 0;
+	SensorValue[lEncoder] = 0;
+	while(-SensorValue[rEncoder] < (abs(6.5) * 360))
+	{
+		motor[mL1] = motor[mL2] = 127;		// Left Motor is run at power level 85
+		motor[mR1] = motor[mR2] = 127;		// Right Motor is run at power level 85
+		wait1Msec(1);
+	}
+	motor[mR1] = motor[mR2] = 0;
+	motor[mL1] = motor[mL2] = 0;
+}
+
+void defendRight () {
+	moveStraightForRotations (1.2);
+	Turn (false, 0.20);
+	SensorValue[rEncoder] = 0;
+	SensorValue[lEncoder] = 0;
+	while(-SensorValue[rEncoder] < (abs(6.5) * 360))
+	{
+		motor[mL1] = motor[mL2] = 127;		// Left Motor is run at power level 85
+		motor[mR1] = motor[mR2] = 127;		// Right Motor is run at power level 85
+		wait1Msec(1);
+	}
+	motor[mR1] = motor[mR2] = 0;
+	motor[mL1] = motor[mL2] = 0;
 }
 
 task main()
 {
-	autoRight10 ();
+	//liftTray ();
+	//moveStraightForRotations (1);
+	//Turn(false, angle180l);
+	//autoLeft5 ();
+defendRight ();
+motor[mL1] = motor[mL2] = 0;
+	motor[mR1] = motor[mR2] = 0;
+	//moveStraightForRotations (_distanceGrabGoal);
 	/*
-	//moveStraightForRotations (1.0);
 	wait1Msec (500);
 	Turn (true, angle90r);
 	wait1Msec (500);

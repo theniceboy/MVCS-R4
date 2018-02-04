@@ -3,16 +3,16 @@
 #pragma config(Sensor, in3,    potScissorL,    sensorPotentiometer)
 #pragma config(Sensor, in4,    potScissorR,    sensorPotentiometer)
 #pragma config(Sensor, in5,    lfClaw,         sensorLineFollower)
-#pragma config(Sensor, dgtl1,  ledR,           sensorLEDtoVCC)
-#pragma config(Sensor, dgtl2,  ledG,           sensorLEDtoVCC)
-#pragma config(Sensor, dgtl3,  legB,           sensorLEDtoVCC)
+#pragma config(Sensor, dgtl1,  autoDirectionLeft, sensorTouch)
+#pragma config(Sensor, dgtl2,  autoScore20Points, sensorTouch)
+#pragma config(Sensor, dgtl3,  autoPlayDefend, sensorTouch)
 #pragma config(Sensor, dgtl4,  ,               sensorTouch)
 #pragma config(Sensor, dgtl5,  ,               sensorTouch)
 #pragma config(Sensor, dgtl6,  armSwitch2,     sensorTouch)
 #pragma config(Sensor, dgtl7,  startAuto,      sensorTouch)
 #pragma config(Sensor, dgtl8,  rEncoder,       sensorQuadEncoder)
 #pragma config(Sensor, dgtl10, lEncoder,       sensorQuadEncoder)
-#pragma config(Sensor, dgtl12, dgt112,         sensorTouch)
+#pragma config(Sensor, dgtl12, antiGravity,    sensorTouch)
 #pragma config(Motor,  port1,           mL2,           tmotorVex393_HBridge, openLoop)
 #pragma config(Motor,  port2,           mL1,           tmotorVex393_MC29, openLoop)
 #pragma config(Motor,  port3,           mR1,           tmotorVex393_MC29, openLoop, reversed)
@@ -192,7 +192,7 @@ void autoLeft20 () {
 	motor[mTray] = -20;
 	moveBackwardForRotations (2.0);
 	wait1Msec (500);
-	Turn(false, 0.99);
+	Turn(true, 0.99);
 	wait1Msec(500);
 	moveStraightForRotations (2.1);
 	motor[mL1] = motor[mL2] = 127;
@@ -275,23 +275,25 @@ void defendRight () {
 
 task main()
 {
-	//liftTray ();
-	//moveStraightForRotations (1);
-	//Turn(false, angle180l);
-	//autoLeft5 ();
-autoRight5 ();
-motor[mL1] = motor[mL2] = 0;
-	motor[mR1] = motor[mR2] = 0;
-	//moveStraightForRotations (_distanceGrabGoal);
-	/*
-	wait1Msec (500);
-	Turn (true, angle90r);
-	wait1Msec (500);
-	Turn (false, angle90l);
-	wait1Msec (500);
-	Turn (false, angle180l);
-	wait1Msec (500);
-	Turn (true, angle180r);
-	//moveBackwardForRotations (1.0);
-	*/
+	if (SensorValue(autoPlayDefend)) {
+		if (SensorValue(autoDirectionLeft)) {
+			//defendLeft ();
+		} else {
+			//defendRight ();
+		}
+	} else {
+		if (SensorValue(autoScore20Points)) {
+			if (SensorValue(autoDirectionLeft)) {
+				autoLeft20 ();
+			} else {
+				//autoRight20 ();
+			}
+		} else {
+			if (SensorValue(autoDirectionLeft)) {
+				//autoLeft5 ();
+			} else {
+				//autoRight5 ();
+			}
+		}
+	}
 }
